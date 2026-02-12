@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { slides } from './data';
 import ChartRenderer from './components/ChartRenderer';
+import { Logo } from './components/Logo';
 import { ChevronLeft, ChevronRight, Presentation, TrendingUp, Info, Quote } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -30,7 +31,7 @@ const App: React.FC = () => {
             <Presentation className="w-6 h-6 text-emerald-500" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-white">Green Edge Strategy</h1>
+            <h1 className="text-lg font-bold tracking-tight text-white">Elevolt</h1>
             <p className="text-xs text-slate-400">Investor Presentation</p>
           </div>
         </div>
@@ -45,14 +46,18 @@ const App: React.FC = () => {
         {/* Slide Content */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 flex flex-col gap-6">
           
-          {/* Slide Title Section */}
-          <div className="mb-2">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">
-              {currentSlide.title}
-            </h2>
-            {currentSlide.subTitle && (
-              <h3 className="text-xl text-slate-400 font-light">{currentSlide.subTitle}</h3>
-            )}
+          {/* Slide Title Section & Logo */}
+          <div className="flex justify-between items-start gap-4 mb-2">
+            <div className="flex-1">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">
+                {currentSlide.title}
+              </h2>
+              {currentSlide.subTitle && (
+                <h3 className="text-xl text-slate-400 font-light">{currentSlide.subTitle}</h3>
+              )}
+            </div>
+            {/* Elevolt Logo positioned top right */}
+            <Logo className="w-40 h-auto shrink-0 opacity-90 hover:opacity-100 transition-opacity" />
           </div>
 
           {/* Main Message Block */}
