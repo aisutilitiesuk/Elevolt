@@ -6,7 +6,7 @@ export interface SlideContent {
   id: number;
   title: string;
   subTitle?: string;
-  mainMessage: string; // New field for the core narrative of the slide
+  mainMessage: string;
   chart1: {
     title: string;
     type: 'bar' | 'line' | 'area' | 'pie' | 'composed' | 'donut';
@@ -14,6 +14,7 @@ export interface SlideContent {
     dataKeys: { key: string; color: string; name?: string }[];
     xAxisKey: string;
     note: string;
+    suffix?: string;
   };
   chart2: {
     title: string;
@@ -22,6 +23,7 @@ export interface SlideContent {
     dataKeys: { key: string; color: string; name?: string }[];
     xAxisKey: string;
     note: string;
+    suffix?: string;
   };
   keyTakeaways: string[];
   keywords: string[];

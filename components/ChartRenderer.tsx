@@ -25,67 +25,90 @@ interface ChartRendererProps {
   data: ChartDataPoint[];
   xAxisKey: string;
   dataKeys: { key: string; color: string; name?: string }[];
+  suffix?: string;
 }
 
-const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dataKeys }) => {
-  // Common style configurations
+const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dataKeys, suffix = '' }) => {
+  // Common style configurations for White Theme
   const axisStyle = {
-    tick: { fill: '#cbd5e1', fontSize: 16, fontWeight: 700 }, // Bolder and brighter
-    tickLine: { stroke: '#94a3b8', strokeWidth: 1 },
-    axisLine: { stroke: '#475569', strokeWidth: 2 }
+    tick: { fill: '#475569', fontSize: 16, fontWeight: 700 }, // Slate 600
+    tickLine: { stroke: '#cbd5e1', strokeWidth: 1 },
+    axisLine: { stroke: '#94a3b8', strokeWidth: 2 }
   };
   
   const tooltipStyle = {
-    contentStyle: { backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc', fontSize: '14px', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.5)' },
-    itemStyle: { color: '#f8fafc', fontWeight: 600 }
+    contentStyle: { backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', fontSize: '14px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' },
+    itemStyle: { color: '#334155', fontWeight: 600 }
   };
 
   const legendStyle = {
-    wrapperStyle: { paddingTop: '24px', fontSize: '14px', fontWeight: 600 }
+    wrapperStyle: { paddingTop: '24px', fontSize: '14px', fontWeight: 600, color: '#334155' }
   };
 
-  const formatYAxis = (value: any) => {
-    if (typeof value === 'number') {
-      if (value >= 1000) return `${(value/1000).toFixed(1)}k`;
-      return value.toString();
+  // Logic to format numbers with suffix and scaling
+  const formatValue = (value: any, index?: number) => {
+    if (typeof value !== 'number') return value;
+    
+    // Logic for mixed units on Slide 2 Chart 2
+    let localSuffix = suffix;
+    if (suffix === 'mixed' && typeof index === 'number' && data[index]) {
+       const item = data[index];
+       const category = String(item[xAxisKey] || '');
+       if (category.includes('%')) localSuffix = '%';
+       else if (category.includes('Mult')) localSuffix = 'x';
+       else localSuffix = '';
     }
-    return value;
+
+    if (localSuffix === 'M') {
+      if (value >= 1000) return (value / 1000).toFixed(1) + 'B';
+      return value.toLocaleString() + 'M';
+    }
+    if (localSuffix === 'k') {
+      if (value >= 1000) return (value / 1000).toFixed(1) + 'M';
+      return value.toLocaleString() + 'k';
+    }
+    
+    // Standard append for $, %, x, B
+    return value.toLocaleString() + (localSuffix === 'mixed' ? '' : localSuffix);
   };
 
-  const margins = { top: 40, right: 30, left: 10, bottom: 30 }; // Increased bottom margin for X-axis labels
+  const formatYAxis = (value: any) => formatValue(value);
+  const formatLabel = (value: any, index: number) => formatValue(value, index);
+
+  const margins = { top: 40, right: 30, left: 10, bottom: 30 }; 
 
   if (type === 'bar') {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={margins}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis 
             dataKey={xAxisKey} 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             dy={10}
           />
           <YAxis 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             tickFormatter={formatYAxis}
             dx={-10}
           />
-          <Tooltip {...tooltipStyle} formatter={(value: number) => value.toLocaleString()} cursor={{fill: '#334155', opacity: 0.2}} />
+          <Tooltip {...tooltipStyle} formatter={(value: number) => formatValue(value)} cursor={{fill: '#f1f5f9'}} />
           <Legend {...legendStyle} />
           {dataKeys.map((k) => (
             <Bar key={k.key} dataKey={k.key} fill={k.color} name={k.name} radius={[4, 4, 0, 0]}>
               <LabelList 
                 dataKey={k.key} 
                 position="top" 
-                fill="#e2e8f0" 
-                fontSize={16} 
+                fill="#334155" // Dark slate for visibility on white
+                fontSize={24} // 100% bigger (from original ~12/14)
                 fontWeight={800}
-                formatter={(val: number) => val.toLocaleString()} 
+                formatter={formatLabel} 
               />
             </Bar>
           ))}
@@ -98,24 +121,24 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={margins}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis 
             dataKey={xAxisKey} 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             dy={10}
           />
           <YAxis 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             tickFormatter={formatYAxis}
             dx={-10}
           />
-          <Tooltip {...tooltipStyle} formatter={(value: number) => value.toLocaleString()} />
+          <Tooltip {...tooltipStyle} formatter={(value: number) => formatValue(value)} />
           <Legend {...legendStyle} />
           {dataKeys.map((k) => (
             <Line 
@@ -125,17 +148,17 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
               stroke={k.color} 
               name={k.name} 
               strokeWidth={5} 
-              dot={{ fill: k.color, r: 6, strokeWidth: 2, stroke: '#1e293b' }} 
+              dot={{ fill: k.color, r: 6, strokeWidth: 2, stroke: '#ffffff' }} 
               activeDot={{ r: 8, strokeWidth: 0 }}
             >
               <LabelList 
                 dataKey={k.key} 
                 position="top" 
                 fill={k.color} 
-                fontSize={16} 
+                fontSize={24} 
                 fontWeight={800}
                 offset={15} 
-                formatter={(val: number) => val.toLocaleString()} 
+                formatter={formatLabel} 
               />
             </Line>
           ))}
@@ -148,24 +171,24 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={margins}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis 
             dataKey={xAxisKey} 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             dy={10}
           />
           <YAxis 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             tickFormatter={formatYAxis}
             dx={-10}
           />
-          <Tooltip {...tooltipStyle} formatter={(value: number) => value.toLocaleString()} />
+          <Tooltip {...tooltipStyle} formatter={(value: number) => formatValue(value)} />
           <Legend {...legendStyle} />
           {dataKeys.map((k) => (
             <Area 
@@ -174,7 +197,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
               dataKey={k.key} 
               stroke={k.color} 
               fill={k.color} 
-              fillOpacity={0.3} 
+              fillOpacity={0.2} 
               name={k.name} 
               strokeWidth={4}
             >
@@ -182,9 +205,9 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
                 dataKey={k.key} 
                 position="top" 
                 fill={k.color} 
-                fontSize={16} 
+                fontSize={24} 
                 fontWeight={800}
-                formatter={(val: number) => val.toLocaleString()} 
+                formatter={formatLabel} 
               />
             </Area>
           ))}
@@ -197,24 +220,24 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
     return (
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={data} margin={margins}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis 
             dataKey={xAxisKey} 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             dy={10}
           />
           <YAxis 
-            stroke="#94a3b8" 
+            stroke="#64748b" 
             tick={axisStyle.tick}
             tickLine={axisStyle.tickLine}
             axisLine={axisStyle.axisLine}
             tickFormatter={formatYAxis}
             dx={-10}
           />
-          <Tooltip {...tooltipStyle} formatter={(value: number) => value.toLocaleString()} />
+          <Tooltip {...tooltipStyle} formatter={(value: number) => formatValue(value)} />
           <Legend {...legendStyle} />
           {dataKeys.map((k, index) => {
             if (index === 0) return (
@@ -222,23 +245,23 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
                   <LabelList 
                     dataKey={k.key} 
                     position="top" 
-                    fill="#e2e8f0" 
-                    fontSize={16} 
+                    fill="#334155" 
+                    fontSize={24} 
                     fontWeight={800}
-                    formatter={(val: number) => val.toLocaleString()} 
+                    formatter={formatLabel} 
                   />
                 </Bar>
             );
             return (
-                <Line key={k.key} type="monotone" dataKey={k.key} stroke={k.color} name={k.name} strokeWidth={5} dot={{r:6, strokeWidth: 2, stroke: '#1e293b'}}>
+                <Line key={k.key} type="monotone" dataKey={k.key} stroke={k.color} name={k.name} strokeWidth={5} dot={{r:6, strokeWidth: 2, stroke: '#ffffff'}}>
                   <LabelList 
                     dataKey={k.key} 
                     position="top" 
                     fill={k.color} 
-                    fontSize={16} 
+                    fontSize={24} 
                     fontWeight={800}
                     offset={15} 
-                    formatter={(val: number) => val.toLocaleString()} 
+                    formatter={formatLabel} 
                   />
                 </Line>
             );
@@ -271,22 +294,22 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ type, data, xAxisKey, dat
                  <text 
                    x={x} 
                    y={y} 
-                   fill="#e2e8f0" 
+                   fill="#334155" 
                    textAnchor={x > cx ? 'start' : 'end'} 
                    dominantBaseline="central" 
-                   fontSize={14} 
+                   fontSize={16} 
                    fontWeight={700}
                  >
-                   {`${name}: ${value}`}
+                   {`${name}: ${formatValue(value)}`}
                  </text>
                );
             }}
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="#1e293b" strokeWidth={2} />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="#ffffff" strokeWidth={2} />
             ))}
           </Pie>
-          <Tooltip {...tooltipStyle} formatter={(value: number) => value.toLocaleString()} />
+          <Tooltip {...tooltipStyle} formatter={(value: number) => formatValue(value)} />
           <Legend {...legendStyle} />
         </PieChart>
       </ResponsiveContainer>

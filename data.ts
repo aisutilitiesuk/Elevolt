@@ -20,6 +20,7 @@ export const slides: SlideContent[] = [
         { key: 'green', color: '#10b981', name: 'Green Revenue ($M)' },
       ],
       note: 'The "Green Lock" adds a recurring revenue layer that grows to $1.66B by Year 10, creating a defensive moat.',
+      suffix: 'M'
     },
     chart2: {
       title: 'Total Units Captured (Cumulative)',
@@ -36,6 +37,7 @@ export const slides: SlideContent[] = [
         { key: 'units', color: '#3b82f6', name: 'Units (Thousands)' },
       ],
       note: 'Accumulating 1.28M units is not just growth; it is capturing 20% of the global addressable market by 2036.',
+      suffix: 'k'
     },
     keyTakeaways: [
       'Unit Economics Shift: Revenue per unit jumps from $3,200 to $4,500.',
@@ -64,6 +66,7 @@ export const slides: SlideContent[] = [
         { key: 'ev', color: '#10b981', name: 'Enterprise Value ($B)' },
       ],
       note: 'Notice the divergence: EV triples while Revenue doubles. This is the "Magic Wand" of multiple expansion.',
+      suffix: 'B'
     },
     chart2: {
       title: 'Traditional vs. Blitz Comparison',
@@ -78,6 +81,7 @@ export const slides: SlideContent[] = [
         { key: 'blitz', color: '#10b981', name: 'The Blitz OEM' },
       ],
       note: 'Traditional OEMs are stuck in 4% linear growth. The Blitz strategy unlocks 13.5% CAGR and a 23.5x Multiple.',
+      suffix: 'mixed'
     },
     keyTakeaways: [
       'The Magic Wand: Simultanous growth in EBITDA and EBITDA Multiplier.',
@@ -104,6 +108,7 @@ export const slides: SlideContent[] = [
         { key: 'value', color: '#10b981', name: 'Value ($B)' }
       ],
       note: 'The "Dirty Gap" ($158.2B) represents existing, non-modernized elevators—our prime target for capture.',
+      suffix: 'B'
     },
     chart2: {
       title: 'Blitz City Valuation Realization',
@@ -119,6 +124,7 @@ export const slides: SlideContent[] = [
         { key: 'value', color: '#f59e0b', name: 'Equity Gain ($B)' },
       ],
       note: 'In Blitz Cities, asset value compounds faster due to route density. $250M yields $14.8B Equity Gain.',
+      suffix: 'B'
     },
     keyTakeaways: [
       'The Dirty Gap: The largest market segment is also the most vulnerable.',
@@ -145,6 +151,7 @@ export const slides: SlideContent[] = [
         { key: 'mult', color: '#8b5cf6', name: 'Multiplier (x)' },
       ],
       note: 'Investors re-rate the stock from a 13x Hardware manufacturer to a 24x Green Tech Utility.',
+      suffix: 'x'
     },
     chart2: {
       title: '5-Year Incremental Green Revenue',
@@ -161,6 +168,7 @@ export const slides: SlideContent[] = [
         { key: 'rev', color: '#10b981', name: 'Green Revenue ($M)' },
       ],
       note: 'By Year 5, we generate over $1B in incremental Green Revenue annually—pure margin expansion.',
+      suffix: 'M'
     },
     keyTakeaways: [
       'Valuation Arbitrage: Trading low-multiple hardware revenue for high-multiple software/utility revenue.',
@@ -171,9 +179,9 @@ export const slides: SlideContent[] = [
   },
   {
     id: 5,
-    title: 'Global Portfolio Vulnerability',
-    subTitle: 'The Shadow Portfolio Opportunity',
-    mainMessage: "The 'Big 4' are vulnerable. 48% of the global market is 'Dirty', and competitors like TKE are heavily exposed to our strategy.",
+    title: 'Global Portfolio Opportunity',
+    subTitle: 'The Shadow Portfolio: TKE as the Ideal Partner',
+    mainMessage: "TKE is not a competitor; it is our primary customer. They have the highest exposure to 'Dirty' units and rely 207% on acquisition for growth.",
     chart1: {
       title: 'Big 4 Portfolio Composition (Millions)',
       type: 'bar',
@@ -188,7 +196,8 @@ export const slides: SlideContent[] = [
         { key: 'dirty', color: '#ef4444', name: 'Non-Regen (Dirty)' },
         { key: 'green', color: '#10b981', name: 'Regen (Green)' },
       ],
-      note: 'The red bars represent "Dirty" units. This is the "Shadow Portfolio" we will capture.',
+      note: 'The red bars represent "Dirty" units. This is the "Shadow Portfolio" we can help TKE modernize.',
+      suffix: 'M'
     },
     chart2: {
       title: 'Net Service Growth via ISP M&A (%)',
@@ -203,14 +212,15 @@ export const slides: SlideContent[] = [
       dataKeys: [
         { key: 'growth', color: '#3b82f6', name: 'Growth %' },
       ],
-      note: 'TKE relies 207% on acquiring ISPs for growth. By capturing ISPs ourselves, we starve TKE of its growth engine.',
+      note: 'TKE relies 207% on acquiring ISPs. We provide the technology to secure this growth organically.',
+      suffix: '%'
     },
     keyTakeaways: [
-      'The Weakest Link: TKE has the highest dependency on ISP acquisition.',
-      'Market Share Swing: Capturing the "Dirty" units directly impacts Big 4 market share.',
-      'Shadow Portfolio: 48% of the total market is undefended against Green Edge.'
+      'Ideal Customer: TKE has the highest dependency on ISP acquisition.',
+      'Market Share Swing: Modernizing the "Dirty" units directly improves TKE\'s market position.',
+      'Shadow Portfolio: 48% of the total market is addressable via Green Edge tech.'
     ],
-    keywords: ['Shadow Portfolio', 'Non-Regen', 'Acquired Heritage']
+    keywords: ['Shadow Portfolio', 'Target Partner', 'Acquired Heritage']
   },
   {
     id: 6,
@@ -230,6 +240,7 @@ export const slides: SlideContent[] = [
         { key: 'edge', color: '#10b981', name: 'Green Edge Plus' },
       ],
       note: 'Green Edge Plus removes the $7,000 barrier to entry, making the upgrade a "no-brainer" for building owners.',
+      suffix: '$'
     },
     chart2: {
       title: 'Cumulative Net Profit (Green Edge)',
@@ -246,6 +257,7 @@ export const slides: SlideContent[] = [
         { key: 'profit', color: '#10b981', name: 'Net Profit ($B)' },
       ],
       note: 'Break-even occurs at Month 16. The remaining 104 months of the contract are pure equity profit.',
+      suffix: 'B'
     },
     keyTakeaways: [
       'Frictionless Sales: $0 upfront cost eliminates budget objections.',
@@ -273,6 +285,7 @@ export const slides: SlideContent[] = [
         { key: 'ev', color: '#10b981', name: 'Enterprise Value ($B)' },
       ],
       note: 'We grow from $22.7B to $78.2B, a 3.5x increase in value, driven by the shift to Utility economics.',
+      suffix: 'B'
     },
     chart2: {
       title: 'EBITDA Multiple Expansion',
@@ -288,12 +301,13 @@ export const slides: SlideContent[] = [
         { key: 'mult', color: '#8b5cf6', name: 'EBITDA Multiple (x)' },
       ],
       note: 'The market rewards our dominance with a Sovereign Utility multiple of 22.5x, solidifying our leadership.',
+      suffix: 'x'
     },
     keyTakeaways: [
-      'The Destination: A $78 Billion Enterprise Value.',
-      'The Strategy: Systematically converting "Dirty" units to "Green" assets.',
-      'The Outcome: Complete dominance of the global ISP elevator market.'
+      'Value Explosion: EV climbs from $22.7B to $78.2B driven by utility economics.',
+      'Multiple Expansion: Market re-rates the company from 14x to 22.5x EBITDA.',
+      'End Game: Transformation into a Sovereign Utility with dominant global infrastructure.'
     ],
-    keywords: ['Hidden Gem', 'Sovereign Utility', '$78.2 Billion']
+    keywords: ['Sovereign Utility', 'Multiple Expansion', '78B Valuation']
   }
 ];

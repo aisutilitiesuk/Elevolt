@@ -1,25 +1,803 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Elevolt</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevolt Presentation</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js DataLabels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+<script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react/": "https://esm.sh/react@18.2.0/",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "recharts": "https://esm.sh/recharts@2.12.7?external=react,react-dom",
-    "lucide-react": "https://esm.sh/lucide-react@0.263.1",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+    "react": "https://esm.sh/react@^19.2.4",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
   }
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<body class="overflow-hidden">
+    <div id="app" class="h-screen w-screen flex flex-col overflow-hidden bg-slate-50 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white">
+        
+        <!-- Header -->
+        <header class="h-16 shrink-0 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-6 z-20 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-100">
+                    <i data-lucide="presentation" class="w-6 h-6 text-emerald-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-slate-900 leading-tight">Elevolt</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500">Investor Presentation</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-xs text-slate-500">
+                    Use <kbd class="bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-mono">←</kbd> <kbd class="bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-mono">→</kbd> to navigate
+                </div>
+                <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                    Slide <span id="slide-counter" class="text-emerald-600 font-bold">1</span> / <span id="total-slides">7</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden relative scroll-smooth bg-slate-50">
+            <div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6">
+                
+                <!-- Title Section -->
+                <div class="flex flex-col gap-2">
+                    <h2 id="slide-title" class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600">
+                        Title
+                    </h2>
+                    <h3 id="slide-subtitle" class="text-xl md:text-2xl text-slate-500 font-light border-l-2 border-slate-300 pl-4">
+                        Subtitle
+                    </h3>
+                </div>
+
+                <!-- Main Message -->
+                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-md relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-emerald-500 to-cyan-500"></div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-slate-50 border border-slate-100 p-2 rounded-lg">
+                            <i data-lucide="quote" class="w-6 h-6 text-emerald-500"></i>
+                        </div>
+                        <p id="slide-message" class="text-lg md:text-xl text-slate-700 font-medium leading-relaxed font-serif italic">
+                            Message
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Chart 1 -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h4 id="chart1-title" class="font-semibold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+                                Chart Title
+                            </h4>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart1-canvas"></canvas>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 text-sm text-slate-600 flex items-start gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <i data-lucide="info" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                            <p><span class="font-semibold text-emerald-700">Insight:</span> <span id="chart1-note">Note</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2 -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h4 id="chart2-title" class="font-semibold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-cyan-600"></i>
+                                Chart Title
+                            </h4>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart2-canvas"></canvas>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 text-sm text-slate-600 flex items-start gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <i data-lucide="info" class="w-4 h-4 text-cyan-600 mt-0.5 shrink-0"></i>
+                            <p><span class="font-semibold text-cyan-700">Insight:</span> <span id="chart2-note">Note</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-6">
+                    <!-- Key Takeaways -->
+                    <div class="lg:col-span-2 bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-xl p-6 relative overflow-hidden shadow-sm">
+                         <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-100 blur-[40px] rounded-full -mr-10 -mt-10 pointer-events-none opacity-50"></div>
+                        <h4 class="text-emerald-700 font-bold mb-4 text-sm uppercase tracking-wider flex items-center gap-2">
+                            Key Takeaways
+                        </h4>
+                        <ul id="takeaways-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                            <!-- JS populated -->
+                        </ul>
+                    </div>
+                    
+                    <!-- Keywords -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-center shadow-sm">
+                        <h4 class="text-slate-500 font-bold mb-4 text-sm uppercase tracking-wider">Strategic Vocabulary</h4>
+                        <div id="keywords-list" class="flex flex-wrap gap-2">
+                             <!-- JS populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Navigation -->
+        <footer class="h-20 shrink-0 border-t border-slate-200 bg-white px-6 flex items-center justify-between z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <button id="btn-prev" class="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border border-slate-300 text-slate-600 hover:bg-slate-50 hover:border-slate-400">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                Previous
+            </button>
+
+            <div id="dots-container" class="flex gap-2 items-center">
+                <!-- JS populated -->
+            </div>
+
+            <button id="btn-next" class="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 shadow-sm">
+                Next
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const slides = [
+          {
+            id: 1,
+            title: 'The 10-Year ISP "Stock Capture"',
+            subTitle: 'From Commodity Maintenance to Green Utility',
+            mainMessage: "Transforming a $3,200 commodity unit into a $4,500 Green Utility asset by layering digital revenue on top of base maintenance.",
+            chart1: {
+              title: 'Revenue Composition: Base vs. Green',
+              type: 'bar',
+              xAxisKey: 'period',
+              data: [
+                { period: 'Year 1', base: 409, green: 166 },
+                { period: 'Year 5', base: 2040, green: 832 },
+                { period: 'Year 10', base: 4090, green: 1660 },
+              ],
+              dataKeys: [
+                { key: 'base', color: '#64748b', name: 'Base Revenue ($M)' }, 
+                { key: 'green', color: '#059669', name: 'Green Revenue ($M)' }, 
+              ],
+              note: 'The "Green Lock" adds a recurring revenue layer that grows to $1.66B by Year 10, creating a defensive moat.',
+            },
+            chart2: {
+              title: 'Total Units Captured (Cumulative)',
+              type: 'area',
+              xAxisKey: 'period',
+              data: [
+                { period: 'Year 1', units: 128 },
+                { period: 'Year 3', units: 384 },
+                { period: 'Year 5', units: 640 },
+                { period: 'Year 7', units: 960 },
+                { period: 'Year 10', units: 1280 },
+              ],
+              dataKeys: [
+                { key: 'units', color: '#2563eb', name: 'Units (Thousands)' }, 
+              ],
+              note: 'Accumulating 1.28M units is not just growth; it is capturing 20% of the global addressable market by 2036.',
+            },
+            keyTakeaways: [
+              'Unit Economics Shift: Revenue per unit jumps from $3,200 to $4,500.',
+              'Defensive Moat: Green-Locked contracts prevent competitor poaching.',
+              'Scale: 1.28 million units represents a critical mass in the global ISP ecosystem.'
+            ],
+            keywords: ['Green Premium', 'Stock Capture', 'Hollowing Out']
+          },
+          {
+            id: 2,
+            title: 'The "Double-Action" Blitz',
+            subTitle: 'Exponential Growth vs Linear Stagnation',
+            mainMessage: "We don't just grow revenue; we expand the valuation multiple simultaneously, creating a 'Double-Action' value multiplier.",
+            chart1: {
+              title: 'Revenue vs Enterprise Value Evolution',
+              type: 'composed',
+              xAxisKey: 'year',
+              data: [
+                { year: '2026', revenue: 4.48, ev: 22.7 },
+                { year: '2028', revenue: 5.26, ev: 29.5 },
+                { year: '2031', revenue: 6.66, ev: 42.8 },
+                { year: '2036', revenue: 9.78, ev: 74.4 },
+              ],
+              dataKeys: [
+                { key: 'revenue', color: '#2563eb', name: 'Revenue ($B)' },
+                { key: 'ev', color: '#059669', name: 'Enterprise Value ($B)' },
+              ],
+              note: 'Notice the divergence: EV triples while Revenue doubles. This is the "Magic Wand" of multiple expansion.',
+            },
+            chart2: {
+              title: 'Traditional vs. Blitz Comparison',
+              type: 'bar',
+              xAxisKey: 'metric',
+              data: [
+                { metric: 'CAGR %', traditional: 4, blitz: 13.5 },
+                { metric: 'EBITDA Mult', traditional: 16, blitz: 23.5 },
+              ],
+              dataKeys: [
+                { key: 'traditional', color: '#64748b', name: 'Traditional OEM' },
+                { key: 'blitz', color: '#059669', name: 'The Blitz OEM' },
+              ],
+              note: 'Traditional OEMs are stuck in 4% linear growth. The Blitz strategy unlocks 13.5% CAGR and a 23.5x Multiple.',
+            },
+            keyTakeaways: [
+              'The Magic Wand: Simultanous growth in EBITDA and EBITDA Multiplier.',
+              'Efficiency: Cost of Acquisition is zero (via hardware) compared to 15x EBITDA for buyouts.',
+              'Liquidation: We are systematically liquidating the old ISP business model.'
+            ],
+            keywords: ['Double-Action', 'Magic Wand', 'Systemic Liquidation']
+          },
+          {
+            id: 3,
+            title: 'Market Segmentation & "Blitz City"',
+            subTitle: 'Asset Reclamation in High-Density Markets',
+            mainMessage: "We ignore low-value sprawl to dominate the $158B 'Dirty Gap' in high-density urban centers like NYC, London, and Paris.",
+            chart1: {
+              title: '2026 Market Value Segmentation ($B)',
+              type: 'donut',
+              xAxisKey: 'name',
+              data: [
+                { name: 'New Installs', value: 59.5 },
+                { name: 'Modernization', value: 15.2 },
+                { name: 'The Dirty Gap', value: 158.2 },
+              ],
+              dataKeys: [
+                { key: 'value', color: '#059669', name: 'Value ($B)' }
+              ],
+              note: 'The "Dirty Gap" ($158.2B) represents existing, non-modernized elevators—our prime target for capture.',
+            },
+            chart2: {
+              title: 'Blitz City Valuation Realization',
+              type: 'area',
+              xAxisKey: 'year',
+              data: [
+                { year: '2026', value: 0.25 },
+                { year: '2028', value: 0.71 },
+                { year: '2031', value: 6.2 },
+                { year: '2036', value: 14.8 },
+              ],
+              dataKeys: [
+                { key: 'value', color: '#d97706', name: 'Equity Gain ($B)' }, 
+              ],
+              note: 'In Blitz Cities, asset value compounds faster due to route density. $250M yields $14.8B Equity Gain.',
+            },
+            keyTakeaways: [
+              'The Dirty Gap: The largest market segment is also the most vulnerable.',
+              'Blitz City Strategy: High density equals lower service costs and higher margins.',
+              'Velocity: Investment is fully realized within 24 months in these target zones.'
+            ],
+            keywords: ['Blitz City', 'Dirty Gap', 'Asset Reclamation']
+          },
+          {
+            id: 4,
+            title: 'Strategic Multipliers & 5-Year Blitz',
+            subTitle: 'Capture & Shield Economics',
+            mainMessage: "The market pays a premium for Green Revenue. A dollar of Green Revenue is worth 2x more to investors than a dollar of Legacy Revenue.",
+            chart1: {
+              title: 'Valuation Multiplier Shift (EV/EBITDA)',
+              type: 'bar',
+              xAxisKey: 'type',
+              data: [
+                { type: 'Legacy', mult: 13 },
+                { type: 'Green Edge', mult: 21 },
+                { type: 'Premium', mult: 24 },
+              ],
+              dataKeys: [
+                { key: 'mult', color: '#7c3aed', name: 'Multiplier (x)' }, 
+              ],
+              note: 'Investors re-rate the stock from a 13x Hardware manufacturer to a 24x Green Tech Utility.',
+            },
+            chart2: {
+              title: '5-Year Incremental Green Revenue',
+              type: 'line',
+              xAxisKey: 'year',
+              data: [
+                { year: 'Y1', rev: 202 },
+                { year: 'Y2', rev: 410 },
+                { year: 'Y3', rev: 625 },
+                { year: 'Y4', rev: 846 },
+                { year: 'Y5', rev: 1070 },
+              ],
+              dataKeys: [
+                { key: 'rev', color: '#059669', name: 'Green Revenue ($M)' },
+              ],
+              note: 'By Year 5, we generate over $1B in incremental Green Revenue annually—pure margin expansion.',
+            },
+            keyTakeaways: [
+              'Valuation Arbitrage: Trading low-multiple hardware revenue for high-multiple software/utility revenue.',
+              'Utility-Grade Status: Achieving the predictability and safety of a utility.',
+              'Sovereign Multiplier: Reaching 2.6x the valuation of standard competitors.'
+            ],
+            keywords: ['Capture & Shield', 'Utility-Grade', 'Multiplier Shift']
+          },
+          {
+            id: 5,
+            title: 'Global Portfolio Opportunity',
+            subTitle: 'The Shadow Portfolio: TKE as the Ideal Partner',
+            mainMessage: "TKE is not a competitor; it is our primary customer. They have the highest exposure to 'Dirty' units and rely 207% on acquisition for growth.",
+            chart1: {
+              title: 'Big 4 Portfolio Composition (Millions)',
+              type: 'bar',
+              xAxisKey: 'name',
+              data: [
+                { name: 'Otis', dirty: 0.96, green: 1.44 },
+                { name: 'KONE', dirty: 0.50, green: 1.15 },
+                { name: 'Schindler', dirty: 0.65, green: 0.90 },
+                { name: 'TKE', dirty: 0.54, green: 0.91 },
+              ],
+              dataKeys: [
+                { key: 'dirty', color: '#dc2626', name: 'Non-Regen (Dirty)' }, 
+                { key: 'green', color: '#059669', name: 'Regen (Green)' },
+              ],
+              note: 'The red bars represent "Dirty" units. This is the "Shadow Portfolio" we can help TKE modernize.',
+            },
+            chart2: {
+              title: 'Net Service Growth via ISP M&A (%)',
+              type: 'bar',
+              xAxisKey: 'name',
+              data: [
+                { name: 'Otis', growth: 126 },
+                { name: 'KONE', growth: 20 },
+                { name: 'Schindler', growth: 125 },
+                { name: 'TKE', growth: 207 },
+              ],
+              dataKeys: [
+                { key: 'growth', color: '#2563eb', name: 'Growth %' },
+              ],
+              note: 'TKE relies 207% on acquiring ISPs. We provide the technology to secure this growth organically.',
+            },
+            keyTakeaways: [
+              'Ideal Customer: TKE has the highest dependency on ISP acquisition.',
+              'Market Share Swing: Modernizing the "Dirty" units directly improves TKE\'s market position.',
+              'Shadow Portfolio: 48% of the total market is addressable via Green Edge tech.'
+            ],
+            keywords: ['Shadow Portfolio', 'Target Partner', 'Acquired Heritage']
+          },
+          {
+            id: 6,
+            title: 'Service Plan Economics',
+            subTitle: 'The "Zero-Dollar" Weapon',
+            mainMessage: "Green Edge Plus creates an 'ISP Killer' offer: We trade $0 CapEx upfront for a 10-year, high-margin exclusive contract.",
+            chart1: {
+              title: 'Plan Comparison: Cost vs Value',
+              type: 'bar',
+              xAxisKey: 'feature',
+              data: [
+                { feature: 'Upfront Cost ($)', green: 7000, edge: 0 },
+                { feature: 'Annual Rev ($)', green: 3840, edge: 4480 },
+              ],
+              dataKeys: [
+                { key: 'green', color: '#64748b', name: 'Standard Green' }, 
+                { key: 'edge', color: '#059669', name: 'Green Edge Plus' }, 
+              ],
+              note: 'Green Edge Plus removes the $7,000 barrier to entry, making the upgrade a "no-brainer" for building owners.',
+            },
+            chart2: {
+              title: 'Cumulative Net Profit (Green Edge)',
+              type: 'line',
+              xAxisKey: 'year',
+              data: [
+                { year: 'Y1', profit: 0.18 },
+                { year: 'Y2', profit: 0.38 },
+                { year: 'Y4', profit: 1.2 },
+                { year: 'Y5', profit: 2.1 },
+                { year: 'Y10', profit: 12.4 },
+              ],
+              dataKeys: [
+                { key: 'profit', color: '#059669', name: 'Net Profit ($B)' },
+              ],
+              note: 'Break-even occurs at Month 16. The remaining 104 months of the contract are pure equity profit.',
+            },
+            keyTakeaways: [
+              'Frictionless Sales: $0 upfront cost eliminates budget objections.',
+              'Long-Term Lock: 10-year contracts replace month-to-month ISP uncertainty.',
+              'Profitability: After Month 16, the contract becomes a pure cash-flow engine.'
+            ],
+            keywords: ['Zero-Dollar Upgrade', 'ISP Killer', 'Month 16 Break-Even']
+          },
+          {
+            id: 7,
+            title: 'Market Value Transformation',
+            subTitle: 'The "Hidden Gem" Realized',
+            mainMessage: "The endpoint of this 10-year strategy is a $78 Billion Sovereign Utility that dominates global infrastructure.",
+            chart1: {
+              title: '10-Year Market Value (EV) Climb',
+              type: 'area',
+              xAxisKey: 'year',
+              data: [
+                { year: '2026', ev: 22.7 },
+                { year: '2028', ev: 31.2 },
+                { year: '2031', ev: 45.8 },
+                { year: '2036', ev: 78.2 },
+              ],
+              dataKeys: [
+                { key: 'ev', color: '#059669', name: 'Enterprise Value ($B)' },
+              ],
+              note: 'We grow from $22.7B to $78.2B, a 3.5x increase in value, driven by the shift to Utility economics.',
+            },
+            chart2: {
+              title: 'EBITDA Multiple Expansion',
+              type: 'line',
+              xAxisKey: 'year',
+              data: [
+                { year: '2026', mult: 14.0 },
+                { year: '2028', mult: 15.5 },
+                { year: '2031', mult: 19.5 },
+                { year: '2036', mult: 22.5 },
+              ],
+              dataKeys: [
+                { key: 'mult', color: '#7c3aed', name: 'EBITDA Multiple (x)' },
+              ],
+              note: 'The market rewards our dominance with a Sovereign Utility multiple of 22.5x, solidifying our leadership.',
+            },
+            keyTakeaways: [
+              'The Destination: A $78 Billion Enterprise Value.',
+              'The Strategy: Systematically converting "Dirty" units to "Green" assets.',
+              'The Outcome: Complete dominance of the global ISP elevator market.'
+            ],
+            keywords: ['Hidden Gem', 'Sovereign Utility', '$78.2 Billion']
+          }
+        ];
+
+        // --- STATE ---
+        let currentIndex = 0;
+        let c1 = null;
+        let c2 = null;
+
+        // --- DOM ELEMENTS ---
+        const els = {
+            slideId: document.getElementById('slide-counter'),
+            totalSlides: document.getElementById('total-slides'),
+            title: document.getElementById('slide-title'),
+            subtitle: document.getElementById('slide-subtitle'),
+            message: document.getElementById('slide-message'),
+            takeaways: document.getElementById('takeaways-list'),
+            keywords: document.getElementById('keywords-list'),
+            dots: document.getElementById('dots-container'),
+            btnPrev: document.getElementById('btn-prev'),
+            btnNext: document.getElementById('btn-next'),
+            chart1Title: document.getElementById('chart1-title'),
+            chart1Note: document.getElementById('chart1-note'),
+            chart2Title: document.getElementById('chart2-title'),
+            chart2Note: document.getElementById('chart2-note')
+        };
+
+        // --- FUNCTIONS ---
+        function init() {
+            // Register ChartDataLabels plugin
+            if (typeof ChartDataLabels !== 'undefined') {
+                Chart.register(ChartDataLabels);
+            }
+            
+            els.totalSlides.innerText = slides.length;
+            renderDots();
+            renderSlide(0);
+            
+            // Listeners
+            document.getElementById('btn-prev').addEventListener('click', prev);
+            document.getElementById('btn-next').addEventListener('click', next);
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'ArrowRight') next();
+                if(e.key === 'ArrowLeft') prev();
+            });
+        }
+
+        function renderDots() {
+            els.dots.innerHTML = '';
+            slides.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.className = `h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-emerald-500 w-10 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-300 w-2 hover:bg-slate-400'}`;
+                dot.onclick = () => { currentIndex = idx; renderSlide(idx); };
+                els.dots.appendChild(dot);
+            });
+        }
+
+        function updateDots() {
+            Array.from(els.dots.children).forEach((dot, idx) => {
+                dot.className = `h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-emerald-500 w-10 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-300 w-2 hover:bg-slate-400'}`;
+            });
+        }
+
+        function prev() {
+            if(currentIndex > 0) {
+                currentIndex--;
+                renderSlide(currentIndex);
+            }
+        }
+
+        function next() {
+            if(currentIndex < slides.length - 1) {
+                currentIndex++;
+                renderSlide(currentIndex);
+            }
+        }
+
+        function renderSlide(index) {
+            const s = slides[index];
+            currentIndex = index;
+            
+            // Text Updates
+            els.slideId.innerText = s.id;
+            els.title.innerText = s.title;
+            els.subtitle.innerText = s.subTitle || '';
+            els.message.innerText = `"${s.mainMessage}"`;
+            
+            // Takeaways
+            els.takeaways.innerHTML = s.keyTakeaways.map(t => `
+                <li class="flex items-start gap-3 text-slate-700 text-sm leading-relaxed font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-sm animate-pulse"></span>
+                    ${t}
+                </li>
+            `).join('');
+
+            // Keywords
+            els.keywords.innerHTML = s.keywords.map(k => `
+                <span class="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-md border border-slate-200 cursor-default shadow-sm hover:border-emerald-200 hover:text-emerald-700 hover:bg-emerald-50 transition-colors">
+                    ${k}
+                </span>
+            `).join('');
+
+            // Buttons State
+            els.btnPrev.disabled = index === 0;
+            els.btnPrev.className = `flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border ${index === 0 ? 'border-slate-200 text-slate-400 cursor-not-allowed bg-slate-50' : 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-slate-400'}`;
+            
+            els.btnNext.disabled = index === slides.length - 1;
+            els.btnNext.className = `flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border ${index === slides.length - 1 ? 'border-slate-200 text-slate-400 cursor-not-allowed bg-slate-50' : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 shadow-sm'}`;
+
+            updateDots();
+
+            // Charts
+            renderChart('chart1', s.chart1);
+            renderChart('chart2', s.chart2);
+            
+            // Refresh Icons
+            lucide.createIcons();
+        }
+
+        function renderChart(idPrefix, config) {
+            const titleEl = document.getElementById(idPrefix + '-title');
+            const noteEl = document.getElementById(idPrefix + '-note');
+            const canvas = document.getElementById(idPrefix + '-canvas');
+
+            // Update Text
+            titleEl.childNodes[2].textContent = ' ' + config.title;
+            noteEl.innerText = config.note;
+
+            // Destroy old chart
+            if (idPrefix === 'chart1' && c1) c1.destroy();
+            if (idPrefix === 'chart2' && c2) c2.destroy();
+
+            // Prepare Data for Chart.js
+            const labels = config.data.map(d => d[config.xAxisKey]);
+            const datasets = config.dataKeys.map(k => {
+                const data = config.data.map(d => d[k.key]);
+                
+                // Determine Chart Type
+                let type = 'bar'; // default
+                if (config.type === 'line' || config.type === 'area') type = 'line';
+                if (config.type === 'donut' || config.type === 'pie') type = 'doughnut';
+                if (config.type === 'composed') type = 'bar'; 
+                
+                // Styles
+                const ds = {
+                    label: k.name || k.key,
+                    data: data,
+                    backgroundColor: k.color,
+                    borderColor: k.color,
+                    borderWidth: 2,
+                    tension: 0.4
+                };
+
+                if (config.type === 'area') {
+                    ds.fill = true;
+                    ds.backgroundColor = hexToRgba(k.color, 0.2);
+                }
+
+                if (config.type === 'line' || (config.type === 'composed' && k.key === 'ev')) {
+                    ds.type = 'line';
+                    ds.pointBackgroundColor = '#ffffff';
+                    ds.pointBorderColor = k.color;
+                    ds.pointBorderWidth = 2;
+                    ds.pointRadius = 4;
+                }
+                
+                // Donut specific
+                if (type === 'doughnut') {
+                    ds.backgroundColor = config.data.map((_, i) => ['#059669', '#2563eb', '#dc2626', '#d97706', '#7c3aed'][i % 5]);
+                    ds.borderColor = '#ffffff';
+                    ds.borderWidth = 2;
+                }
+
+                return ds;
+            });
+
+            // Global Config with DataLabels
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                   padding: {
+                       top: 30 // Extra space for labels above bars
+                   }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#475569', font: { family: 'Inter', size: 12, weight: 600 } },
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        backgroundColor: '#ffffff',
+                        titleColor: '#0f172a',
+                        bodyColor: '#475569',
+                        borderColor: '#e2e8f0',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: true,
+                        boxPadding: 4,
+                        callbacks: {
+                            labelTextColor: () => '#475569'
+                        }
+                    },
+                    datalabels: {
+                        display: 'auto',
+                        color: (context) => {
+                            // Dark text for bars/lines on white bg. White text for Donut segments.
+                            const type = context.dataset.type || context.chart.config.type;
+                            if (type === 'doughnut' || type === 'pie') {
+                                return '#ffffff'; // White inside colored segments
+                            }
+                            return '#0f172a'; // Dark slate for everything else (on white bg)
+                        },
+                        anchor: (context) => {
+                            const type = context.dataset.type || context.chart.config.type;
+                            if (type === 'doughnut') return 'center';
+                            if (type === 'line') return 'end';
+                            return 'end'; // bar: put at end (top)
+                        },
+                        align: (context) => {
+                            const type = context.dataset.type || context.chart.config.type;
+                            if (type === 'doughnut') return 'center';
+                            if (type === 'line') return 'top';
+                            return 'end'; // bar: put outside top
+                        },
+                        offset: (context) => {
+                            const type = context.dataset.type || context.chart.config.type;
+                            if (type === 'line') return 8;
+                            if (type === 'bar' || type === 'composed') return 4;
+                            return 0;
+                        },
+                        font: {
+                            weight: 'bold',
+                            size: 22 
+                        },
+                        formatter: (value) => {
+                            if (typeof value === 'number') {
+                                if (value >= 1000) return (value/1000).toFixed(1) + 'B';
+                                if (value % 1 !== 0) return value.toFixed(1);
+                            }
+                            return value;
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#64748b', font: { weight: 600 } },
+                        grid: { color: '#e2e8f0', drawBorder: false }
+                    },
+                    y: {
+                        ticks: { color: '#64748b', font: { weight: 600 } },
+                        grid: { color: '#e2e8f0', drawBorder: false }
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+            };
+            
+            if (config.type === 'donut' || config.type === 'pie') {
+                options.scales = { x: { display: false }, y: { display: false } };
+            }
+
+            // Create Chart
+            const ctx = canvas.getContext('2d');
+            const newChart = new Chart(ctx, {
+                type: (config.type === 'donut' || config.type === 'pie') ? 'doughnut' : 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: options
+            });
+
+            if (idPrefix === 'chart1') c1 = newChart;
+            if (idPrefix === 'chart2') c2 = newChart;
+        }
+
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // Start
+        init();
+
+    </script>
+</body>
 </html>
